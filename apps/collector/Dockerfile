@@ -1,4 +1,4 @@
-FROM openjdk:21-jdk AS build
+FROM eclipse-temurin:21-jdk AS build
 
 WORKDIR /app
 
@@ -11,18 +11,15 @@ COPY mvnw pom.xml ./
 COPY .mvn .mvn
 RUN chmod +x ./mvnw
 
-# Cache some dependencies on an earlier layer
-RUN ./mvnw --batch-mode clean package -Dmaven.main.skip -Dmaven.test.skip -B && rm -r target
-
+COPY target target
 COPY src src
 
-RUN curl -o /tmp/cloud-profiler-ui.tgz "${CP_UI}-${CP_UI_VERSION}.tgz" \
-    && tar -xvzf /tmp/cloud-profiler-ui.tgz -C /tmp \
+#RUN curl -o /tmp/cloud-profiler-ui.tgz "${CP_UI}-${CP_UI_VERSION}.tgz" \
+COPY netcracker-cloud-profiler-ui-*.tgz /tmp/cloud-profiler-ui.tgz
+RUN tar -xvzf /tmp/cloud-profiler-ui.tgz -C /tmp \
     && cp -fR /tmp/package/build/* src/main/resources/META-INF/resources/
 
-RUN ./mvnw --batch-mode clean package -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -V -B
-
-FROM alpine/openjdk21:21.0.8.9.01 AS runtime
+FROM eclipse-temurin:21-jre AS runtime
 ENV APP_UID=10001 \
     JVM_KEYSTORE="/etc/ssl/certs/java/cacerts"
 
