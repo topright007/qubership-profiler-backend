@@ -23,9 +23,11 @@ public class MinioUtils {
     final String bucketName="profiler";
     final String fileDir = "src/test/resources/persistence/cloud/";
     public void uploadFileAndGetPath( String objectName, String fileName) {
+        uploadFile(objectName, fileDir + fileName);
+    }
 
+    public void uploadFile(String objectName, String filePath) {
         try {
-            String filePath = fileDir + fileName;
             boolean found = minioClient.bucketExists(BucketExistsArgs.builder()
             .bucket(bucketName)
             .build());
