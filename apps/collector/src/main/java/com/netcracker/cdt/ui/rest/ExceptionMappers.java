@@ -44,7 +44,7 @@ public class ExceptionMappers {
                 Log.errorf(x, "error during execution: %s", x.getMessage());
             }
             var msg = new Message(Instant.now(), code, status, x.getMessage(), "");
-            return Response.serverError().entity(msg).build();
+            return Response.status(code).type(MediaType.APPLICATION_JSON_TYPE).entity(msg).build();
         } else {
             throw x;
         }
