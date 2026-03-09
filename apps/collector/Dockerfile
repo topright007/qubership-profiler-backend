@@ -2,22 +2,12 @@ FROM eclipse-temurin:21-jdk AS build
 
 WORKDIR /app
 
-ENV CP_UI="https://github.com/pd.sandbox.npm.staging/%40netcracker/cloud-profiler-ui/-/%40netcracker/cloud-profiler-ui"
-
-ARG CP_UI_VERSION
-ENV CP_UI_VERSION=$CP_UI_VERSION
-
 COPY mvnw pom.xml ./
 COPY .mvn .mvn
 RUN chmod +x ./mvnw
 
 COPY target target
 COPY src src
-
-#RUN curl -o /tmp/cloud-profiler-ui.tgz "${CP_UI}-${CP_UI_VERSION}.tgz" \
-COPY netcracker-cloud-profiler-ui-*.tgz /tmp/cloud-profiler-ui.tgz
-RUN tar -xvzf /tmp/cloud-profiler-ui.tgz -C /tmp \
-    && cp -fR /tmp/package/build/* src/main/resources/META-INF/resources/
 
 FROM eclipse-temurin:21-jre AS runtime
 ENV APP_UID=10001 \
