@@ -6,18 +6,16 @@
 export default function createProxy(env) {
     const { API_URL } = env;
 
-    /**
-     * @type {import('webpack-dev-server').Configuration['proxy']}
-     */
-    const proxy = {
-        '/esc': {
+    return [
+        {
+            context: ['/esc'],
             target: API_URL,
             changeOrigin: true,
-
             secure: false,
             logLevel: 'debug',
         },
-        '/cdt': {
+        {
+            context: ['/cdt'],
             target: API_URL,
             changeOrigin: true,
             pathRewrite: {
@@ -25,6 +23,5 @@ export default function createProxy(env) {
             },
             secure: false,
         },
-    };
-    return proxy;
+    ];
 }

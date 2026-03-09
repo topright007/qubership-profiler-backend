@@ -2,7 +2,7 @@ import { extractErrorMessageFromBeError } from '@app/common/errors/error-utils';
 import { isInvalidTokenError } from '@app/common/guards/errors';
 import { userLocale } from '@app/common/user-locale';
 import { API_BASE_URL } from '@app/constants/app.constants';
-import { uxNotificationHelper } from '@netcracker/ux-react';
+import { message } from 'antd';
 import {
     type BaseQueryFn,
     type FetchArgs,
@@ -75,9 +75,8 @@ export const baseQueryWithAuth: BaseQueryFn<string | FetchArgs, unknown, FetchBa
     const baseApiResult = await baseQuery(args, api, extraOptions);
     if (baseApiResult.error) {
         if (isInvalidTokenError(baseApiResult.error)) {
-            uxNotificationHelper.error({
-                title: 'Invalid Token',
-                description: 'You need to login again.',
+            message.error({
+                content: 'Invalid Token. You need to login again.',
                 key: 'invalid_token',
             });
             // Here should be your logout logic
@@ -85,10 +84,8 @@ export const baseQueryWithAuth: BaseQueryFn<string | FetchArgs, unknown, FetchBa
             // window.location.replace(window.location.toString());
         }
         const beErrorMessage = extractErrorMessageFromBeError(baseApiResult.error);
-        uxNotificationHelper.error({
-            title: 'API Error',
-            description: beErrorMessage?.message ?? 'Unknown Error',
-            time: new Date().toLocaleString(userLocale),
+        message.error({
+            content: `API Error: ${beErrorMessage?.message ?? 'Unknown Error'} (${new Date().toLocaleString(userLocale)})`,
             key: 'unknown_error',
         });
     }

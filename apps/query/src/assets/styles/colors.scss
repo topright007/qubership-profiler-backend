@@ -1,4 +1,5 @@
-@import '@netcracker/ux-react/assets/styles/colors';
+@forward './_colors';
+@use './_colors' as *;
 
 .pigeon {
     color: $pigeon;

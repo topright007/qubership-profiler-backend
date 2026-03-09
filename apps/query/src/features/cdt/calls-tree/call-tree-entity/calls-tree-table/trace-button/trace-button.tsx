@@ -1,8 +1,7 @@
-import { usePopupVisibleState } from '@netcracker/cse-ui-components';
-import { ReactComponent as TraceIconSvg } from '@netcracker/ux-assets/icons/document/document-outline-16.svg';
-import { UxButton, UxIcon, UxPopupNew } from '@netcracker/ux-react';
-import { UxTextArea } from '@netcracker/ux-react/inputs/input/textarea/textarea.component';
-import { type FC } from 'react';
+import { FileTextOutlined } from '@ant-design/icons';
+import { Button, Input, Modal } from 'antd';
+import { usePopupVisibleState } from '@app/utils/use-popup-visible-state';
+import type { FC } from 'react';
 import classNames from '../../content-controls.module.scss';
 
 interface TraceButtonModel {
@@ -14,20 +13,18 @@ const TraceButton: FC<TraceButtonModel> = ({ text }) => {
 
     return (
         <div className={classNames.toolControls}>
-            <UxButton type="light" onClick={open}>
-                {<UxIcon style={{ fontSize: 16, color: '#0068FF' }} component={TraceIconSvg} />}
-            </UxButton>
-            <UxPopupNew
+            <Button type="default" onClick={open} icon={<FileTextOutlined style={{ fontSize: 16, color: '#0068FF' }} />} />
+            <Modal
                 visible={visible}
-                header="StackTrace"
-                size="large"
-                footer={<UxButton onClick={close}>Close</UxButton>}
-                // TODO: replace value with real text
-                content={<UxTextArea placeholder="Placeholder" readOnly={true} autoSize value={text} />}
+                title="StackTrace"
+                width={800}
+                footer={<Button onClick={close}>Close</Button>}
                 onOk={close}
                 onCancel={close}
-                onClose={close}
-            />
+                afterClose={close}
+            >
+                <Input.TextArea placeholder="Placeholder" readOnly autoSize value={text} />
+            </Modal>
         </div>
     );
 };

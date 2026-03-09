@@ -2,7 +2,10 @@ import { getAccessToken } from '@app/store/base-query';
 import { getAuthHeader } from '@app/store/base-query';
 
 describe('getAccessToken', () => {
-    const token = {
+    const token: {
+        accessToken: number | null;
+        access_token: number;
+    } = {
         accessToken: null,
         access_token: 54321,
     };
@@ -35,7 +38,12 @@ describe('getAccessToken', () => {
 });
 
 describe('getAuthHeader', () => {
-    const token = {
+    const token: {
+        accessToken: number | null;
+        access_token: number;
+        tokenType: string | null;
+        token_type: string;
+    } = {
         accessToken: null,
         access_token: 54321,
         tokenType: null,

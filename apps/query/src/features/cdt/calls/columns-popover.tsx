@@ -1,14 +1,15 @@
 import { useCallsStore, useCallsStoreSelector } from '@app/features/cdt/calls/calls-store';
 import { CALLS_COLUMNS_KEYS, useSortedCallsColumns } from '@app/features/cdt/calls/hooks/use-calls-columns';
-import { type PropertiesItemModel, reorderItems } from '@netcracker/cse-ui-components';
-import { PropertiesList } from '@netcracker/cse-ui-components/components/properties-list/properties-list';
-import { ReactComponent as SettingsOutline20Icon } from '@netcracker/ux-assets/icons/settings/settings-outline-20.svg';
-import { UxButton, UxIcon, UxPopover } from '@netcracker/ux-react';
+import { reorderItems } from '@app/utils/reorder-items';
+import { PropertiesList, type PropertiesItemModel } from '@app/components';
+import { SettingOutlined } from '@ant-design/icons';
+import { Button, Popover } from 'antd';
 import { type Key, type ReactNode, memo, useCallback } from 'react';
 
 const ColumnsPopover = () => {
-    const [columnsOrder, set] = useCallsStore(s => s.columnsOrder);
-    const _columnsOrder = columnsOrder.length ? columnsOrder : CALLS_COLUMNS_KEYS;
+    const columnsOrder = useCallsStoreSelector(s => s.columnsOrder);
+    const [, set] = useCallsStore();
+    const _columnsOrder = columnsOrder?.length ? columnsOrder : CALLS_COLUMNS_KEYS;
     const hiddenColumns = useCallsStoreSelector(s => s.hiddenColumns);
     const sortedColumns = useSortedCallsColumns();
 
@@ -30,28 +31,25 @@ const ColumnsPopover = () => {
         [hiddenColumns, set]
     );
     return (
-        <UxPopover
-            placement={'bottomRight'}
+        <Popover
+            placement="bottomRight"
             title={<span>Properties</span>}
-            arrow={false}
             overlayStyle={{ paddingTop: 0 }}
             content={
-                <>
-                    <PropertiesList
-                        onReorder={handleReorder}
-                        items={sortedColumns.map(col => ({
-                            label: col.title as ReactNode,
-                            value: col.key as Key,
-                            data: col,
-                            hidden: hiddenColumns.includes(col.key),
-                        }))}
-                        onToggle={handleToggle}
-                    />
-                </>
+                <PropertiesList
+                    onReorder={handleReorder}
+                    items={sortedColumns.map(col => ({
+                        label: col.title as ReactNode,
+                        value: col.key as Key,
+                        data: col,
+                        hidden: hiddenColumns.includes(col.key),
+                    }))}
+                    onToggle={handleToggle}
+                />
             }
         >
-            <UxButton type="light" leftIcon={<UxIcon component={SettingsOutline20Icon} />} />
-        </UxPopover>
+            <Button type="default" icon={<SettingOutlined style={{ fontSize: 20 }} />} />
+        </Popover>
     );
 };
 

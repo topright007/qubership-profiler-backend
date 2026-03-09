@@ -1,8 +1,6 @@
 import { ESC_CALL_TREE_QUERY_PARAMS } from '@app/constants/query-params';
-import { ReactComponent as ActionsIcon } from '@netcracker/ux-assets/icons/actions/actions-20.svg';
-import { ReactComponent as BookmarkIcon } from '@netcracker/ux-assets/icons/bookmark/bookmark-outline-16.svg';
-import { ReactComponent as DeleteIcon } from '@netcracker/ux-assets/icons/delete/delete-outline-16.svg';
-import { UxButton, UxDropdownNew, UxIcon, UxInput, type UxDropdownNewItem } from '@netcracker/ux-react';
+import { EllipsisOutlined, BookOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Button, Dropdown, Input, Menu } from 'antd';
 import { useState, type FC, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import classNames from '../content-controls.module.scss';
@@ -35,12 +33,11 @@ const CallsTreeTableSearch: FC = () => {
     );
 
     return (
-        <UxInput.Search
+        <Input.Search
             className={classNames.search}
             value={callsTreeQuery}
             placeholder="Search"
             size="small"
-            outlined
             onChange={e => onChangeSearch(e.target.value)}
         />
     );
@@ -49,22 +46,8 @@ const CallsTreeTableSearch: FC = () => {
 const CallTreeTableTools: FC = () => {
     const disableWidget = useDisableWidgetFunction();
 
-    const DROPDOWN_ITEMS: UxDropdownNewItem[] = [
-        {
-            id: 'labelsManagement',
-            text: 'Labels Managemenet',
-            leftIcon: <UxIcon style={{ fontSize: 16 }} component={BookmarkIcon} />,
-        },
-        {
-            id: 'remove',
-            text: 'Remove',
-            className: 'amarant-label',
-            leftIcon: <UxIcon style={{ fontSize: 16 }} component={DeleteIcon} />,
-        },
-    ];
-
-    function handleClick(item: UxDropdownNewItem) {
-        switch (item.id) {
+    function handleClick({ key }: { key: string }) {
+        switch (key) {
             case 'labelsManagement':
                 console.log('Labels managemenet choosen');
                 break;
@@ -74,13 +57,23 @@ const CallTreeTableTools: FC = () => {
         }
     }
 
+    const menu = (
+        <Menu
+            onClick={handleClick}
+            items={[
+                { key: 'labelsManagement', icon: <BookOutlined style={{ fontSize: 16 }} />, label: 'Labels Managemenet' },
+                { key: 'remove', icon: <DeleteOutlined style={{ fontSize: 16 }} />, label: 'Remove', className: 'amarant-label' },
+            ]}
+        />
+    );
+
     return (
         <div className={classNames.toolControls}>
             <CallsTreeTableSearch />
             <ColumnsPopover />
-            <UxDropdownNew items={DROPDOWN_ITEMS} onItemClick={handleClick}>
-                <UxButton type="light" size="medium" leftIcon={<UxIcon component={ActionsIcon} />} />
-            </UxDropdownNew>
+            <Dropdown overlay={menu}>
+                <Button type="default" size="middle" icon={<EllipsisOutlined style={{ fontSize: 20 }} />} />
+            </Dropdown>
         </div>
     );
 };

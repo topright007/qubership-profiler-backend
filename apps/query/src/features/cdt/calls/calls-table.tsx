@@ -8,9 +8,10 @@ import { type CallInfo, useGetCallsByConditionQuery } from '@app/store/cdt-opena
 import { useAppDispatch, useAppSelector } from '@app/store/hooks';
 import { contextDataAction } from '@app/store/slices/context-slices';
 import { ReactComponent as NoDataGraySvg } from '@assets/illustrations/no-data-gray.svg';
-import { InfoPage } from '@netcracker/cse-ui-components';
-import { ReactComponent as Sync20Icon } from '@netcracker/ux-assets/icons/sync/sync-20.svg';
-import { UxButton, UxIcon, UxLoader, UxTable, type UxTableProps } from '@netcracker/ux-react';
+import { SyncOutlined } from '@ant-design/icons';
+import { InfoPage } from '@app/components';
+import { Button, Spin, Table } from 'antd';
+import type { TableProps } from 'antd/lib/table';
 import type { ColumnType, TablePaginationConfig } from 'antd/lib/table';
 import type { FilterValue, SorterResult, TableCurrentDataSource, TableRowSelection } from 'antd/lib/table/interface';
 import {
@@ -37,12 +38,12 @@ function callsErrorMessage(error: unknown) {
     return message;
 }
 
-const tableRowKey = (r: CallInfo) => `${r.ts}-${r.duration}-${r.pod?.pod}`;
+const tableRowKey = (r: CallInfo) => `${String(r.ts)}-${r.duration}-${r.pod?.pod}`;
 const noDataIconStyle: CSSProperties = { fontSize: 56 };
 
-const tableIndicator = { indicator: <UxLoader size="large" /> };
+const tableIndicator = { indicator: <Spin size="large" /> };
 const CallsTable: FC = memo(() => {
-    const [, set] = useCallsStore(s => s);
+    const [, set] = useCallsStore();
     const dispatch = useAppDispatch();
     const containerRef = useRef<HTMLDivElement>(null);
     const storedColumnWidths = useAppSelector(selectCallsColumnWidths);
@@ -52,7 +53,7 @@ const CallsTable: FC = memo(() => {
 
     useLayoutEffect(() => {
         if (callRequest.view?.page === 1) {
-            const tableBody = containerRef.current?.querySelector('.ux-table-body');
+            const tableBody = containerRef.current?.querySelector('.ant-table-body');
             if (tableBody) {
                 tableBody.scrollTo({
                     top: 0,
@@ -65,7 +66,7 @@ const CallsTable: FC = memo(() => {
         skip: shouldSkip,
     });
 
-    const tableScroll: UxTableProps['scroll'] = useMemo(() => {
+    const tableScroll: TableProps<CallInfo>['scroll'] = useMemo(() => {
         if (containerRef.current?.clientHeight) {
             return {
                 x: 'max-content',
@@ -83,7 +84,7 @@ const CallsTable: FC = memo(() => {
         return (_: unknown, data: ResizeCallbackData) => {
             const { size } = data;
             setColumnWidths(prev => {
-                return { ...prev, [columnKey]: size.width };
+                return { ...prev, [String(columnKey)]: size.width };
             });
         };
     }, []);
@@ -92,7 +93,7 @@ const CallsTable: FC = memo(() => {
             return (_: unknown, data: ResizeCallbackData) => {
                 const { width } = data.size;
                 setColumnWidths(prev => {
-                    const widths = { ...prev, [columnKey]: width };
+                    const widths = { ...prev, [String(columnKey)]: width };
                     dispatch(appDataActions.setCallsColumnWidths(widths));
 
                     return widths;
@@ -108,12 +109,12 @@ const CallsTable: FC = memo(() => {
                     return <ResizableTitle {...props} />;
                 },
             },
-        } as UxTableProps['components'];
+        } as TableProps<CallInfo>['components'];
     }, []);
 
     const resizableColumns = useMemo(() => {
         return columns?.map(col => {
-            const width = columnWidths?.[col.key as Key] ?? (col.width as number);
+            const width = columnWidths?.[String(col.key)] ?? (col.width as number);
             return {
                 ...col,
                 onHeaderCell: () => {
@@ -127,7 +128,7 @@ const CallsTable: FC = memo(() => {
                     return resizableProps;
                 },
                 width: width,
-            } as ColumnType<Call>;
+            } as ColumnType<CallInfo>;
         });
     }, [columnWidths, columns, handleResize, handleResizeStop]);
 
@@ -151,7 +152,7 @@ const CallsTable: FC = memo(() => {
         [dispatch, isFetching]
     );
     useLayoutEffect(() => {
-        const tableContent = document.querySelector('.dynamicTable .ux-table-body');
+        const tableContent = document.querySelector('.dynamicTable .ant-table-body');
         if (tableContent) {
             tableContent.addEventListener('scroll', handleBottomReached);
         }
@@ -201,7 +202,7 @@ const CallsTable: FC = memo(() => {
                         Select the Namespace/Service and Period
                     </span>
                 }
-                icon={<UxIcon component={NoDataGraySvg} style={noDataIconStyle} />}
+                icon={<NoDataGraySvg style={noDataIconStyle} />}
             />
         );
     }
@@ -217,11 +218,11 @@ const CallsTable: FC = memo(() => {
                         {message}
                     </span>
                 }
-                icon={<UxIcon component={NoDataGraySvg} style={noDataIconStyle} />}
+                icon={<NoDataGraySvg style={noDataIconStyle} />}
                 additionalContent={
-                    <UxButton onClick={refetch} type="text" color="blue" leftIcon={<UxIcon component={Sync20Icon} />}>
+                    <Button onClick={refetch} type="link" icon={<SyncOutlined />}>
                         Reload
-                    </UxButton>
+                    </Button>
                 }
             />
         );
@@ -231,13 +232,13 @@ const CallsTable: FC = memo(() => {
         <div className={classNames.container}>
             <ContentControls />
             <div ref={containerRef} className="table-container">
-                <UxTable
+                <Table<CallInfo>
                     rowSelection={rowSelection}
                     className="dynamicTable"
                     dataSource={data?.calls}
                     rowKey={tableRowKey}
                     onChange={handleTableChange}
-                    columns={resizableColumns}
+                    columns={resizableColumns as any}
                     components={tableComponents}
                     loading={isFetching && tableIndicator}
                     scroll={tableScroll}

@@ -1,8 +1,8 @@
-import type { FC } from 'react';
-import { highlight } from '@netcracker/cse-ui-components/utils/highlight';
-import { useSearchParams } from 'react-router-dom';
 import { ESC_CALL_TREE_QUERY_PARAMS } from '@app/constants/query-params';
+import { highlight } from '@app/utils/highlight';
 import { escapeRegExp } from 'lodash';
+import type { FC } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 interface CallsTreeSearchedElementProps {
     text: string;

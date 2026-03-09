@@ -1,4 +1,5 @@
-import { UxTooltip, type UxTooltipProps } from '@netcracker/ux-react';
+import { Tooltip } from 'antd';
+import type { TooltipProps } from 'antd';
 import {
     type AriaAttributes,
     type CSSProperties,
@@ -19,7 +20,7 @@ export interface HtmlEllipsisProps extends AriaAttributes {
 
     className?: string;
 
-    tooltipProps?: UxTooltipProps;
+    tooltipProps?: TooltipProps;
 
     lines?: number;
 }
@@ -51,7 +52,7 @@ const HtmlEllipsis = memo(({ text, tooltipProps, lines = 1, style, className, ..
     }, [lines, style]);
 
     return (
-        <UxTooltip
+        <Tooltip
             title={text}
             destroyTooltipOnHide
             trigger={canBeVisibleTooltip ? ['hover'] : 'none'}
@@ -62,7 +63,7 @@ const HtmlEllipsis = memo(({ text, tooltipProps, lines = 1, style, className, ..
                     {text}
                 </span>
             </span>
-        </UxTooltip>
+        </Tooltip>
     );
 });
 

@@ -89,7 +89,7 @@ export const createPodsInfoTableDataSource = (
     dumps: DumpsQueryStore
 ) => {
     return containers.map(container => {
-        const containerStats = {
+        const containerStats: Record<string, number | undefined> = {
             dataAvailableFrom: undefined,
             dataAvailableTo: undefined,
             startTime: undefined,

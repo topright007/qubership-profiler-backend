@@ -1,15 +1,14 @@
+import type { ReactNode } from 'react';
+import type { TreeTableColumn } from '@app/components/tree-table/types';
 import type { CallParameter } from '@app/store/cdt-openapi';
-import { type UxTableNewColumn, type UxTableNewData } from '@netcracker/ux-react';
 
-export type TableData = UxTableNewData<CallParameter>;
+export type TableData = CallParameter;
 
-export const columnsFactory = (): UxTableNewColumn<TableData>[] => [
+export const columnsFactory = (): TreeTableColumn<TableData>[] => [
     {
         name: 'Parameter',
         type: 'accessor',
         dataKey: 'id',
-        cellRender: props => {
-            return props.getValue();
-        },
+        cellRender: props => (props.getValue?.() ?? null) as ReactNode,
     },
 ];

@@ -1,18 +1,17 @@
+import type { ReactNode } from 'react';
+import type { TreeTableColumn } from '@app/components/tree-table/types';
 import type { CallStatsInfo } from '@app/store/cdt-openapi';
-import { type UxTableNewColumn, type UxTableNewData } from '@netcracker/ux-react';
 import prettyMilliseconds from 'pretty-ms';
 
-export type TableData = UxTableNewData<CallStatsInfo>;
+export type TableData = CallStatsInfo;
 
-export const columnsFactory = (): UxTableNewColumn<TableData>[] => [
+export const columnsFactory = (): TreeTableColumn<TableData>[] => [
     {
         name: 'Name',
         type: 'accessor',
         dataKey: 'name',
         width: 115,
-        cellRender: props => {
-            return props.getValue();
-        },
+        cellRender: props => (props.getValue?.() ?? null) as ReactNode,
     },
     {
         name: 'method itself',
@@ -20,8 +19,8 @@ export const columnsFactory = (): UxTableNewColumn<TableData>[] => [
         dataKey: 'self',
         width: 158,
         cellRender: props => {
-            if (props.row.original.total) return prettyMilliseconds(Number(props.getValue()));
-            return props.getValue();
+            if (props.row.original.total) return prettyMilliseconds(Number(props.getValue?.() ?? 0));
+            return (props.getValue?.() ?? null) as ReactNode;
         },
     },
     {
@@ -30,9 +29,8 @@ export const columnsFactory = (): UxTableNewColumn<TableData>[] => [
         dataKey: 'total',
         width: 131,
         cellRender: props => {
-            if (props.getValue()) {
-                return prettyMilliseconds(props.getValue());
-            }
+            const v = props.getValue?.();
+            return v != null ? prettyMilliseconds(v as number) : null;
         },
     },
 ];

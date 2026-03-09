@@ -34,6 +34,7 @@ export default {
      * @type {import('webpack-dev-server').Configuration}
      */
     devServer: {
+        host: 'localhost',
         open: process.env.OPEN_BROWSER ? process.env.OPEN_BROWSER === 'true' : true,
         port: parseInt(process.env.PORT) || 3030,
         compress: true,

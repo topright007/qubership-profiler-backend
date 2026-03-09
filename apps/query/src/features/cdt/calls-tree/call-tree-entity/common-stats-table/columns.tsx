@@ -1,34 +1,29 @@
+import type { TreeTableColumn } from '@app/components/tree-table/types';
 import HighlightCell from '@app/components/highlight-cell/highlight-cell';
 import type { StatsInfo } from '@app/store/cdt-openapi';
-import { type UxTableNewColumn, type UxTableNewData } from '@netcracker/ux-react';
 
-export type TableData = UxTableNewData<StatsInfo>;
+export type TableData = StatsInfo;
 
-export const columnsFactory = (): UxTableNewColumn<TableData>[] => [
+export const columnsFactory = (): TreeTableColumn<TableData>[] => [
     {
         name: '',
         type: 'accessor',
         dataKey: 'name',
         width: 200,
-        cellRender: props => {
-            return <span style={{ display: 'inline-flex', gap: 8 }}>{props.getValue()} </span>;
-        },
+        cellRender: props => <span style={{ display: 'inline-flex', gap: 8 }}>{String(props.getValue?.() ?? '')} </span>,
     },
     {
         name: '',
         type: 'accessor',
         dataKey: 'totalTime',
         width: 110,
-        cellRender: props => {
-            return (
-                props.getValue() && (
-                    <span style={{ height: 13, display: 'inline-flex', gap: 8, fontWeight: 500 }}>
-                        {props.getValue()}
-                        {' ms'}
-                    </span>
-                )
-            );
-        },
+        cellRender: props =>
+            props.getValue?.() ? (
+                <span style={{ height: 13, display: 'inline-flex', gap: 8, fontWeight: 500 }}>
+                    {String(props.getValue?.())}
+                    {' ms'}
+                </span>
+            ) : null,
     },
     {
         name: '',
@@ -36,13 +31,10 @@ export const columnsFactory = (): UxTableNewColumn<TableData>[] => [
         dataKey: 'totalTimePercent',
         width: 110,
         cellRender: props => {
-            return (
-                props.getValue() && (
-                    <HighlightCell highlight={props.getValue() > 90} >
-                        {'(' + props.getValue().toFixed(2) + '%)'}
-                    </HighlightCell>
-                )
-            );
+            const v = (props.getValue?.() ?? undefined) as number | undefined;
+            return v != null ? (
+                <HighlightCell highlight={v > 90}>{`(${v.toFixed(2)}%)`}</HighlightCell>
+            ) : null;
         },
     },
 ];

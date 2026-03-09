@@ -1,5 +1,5 @@
+import { TreeTable } from '@app/components/tree-table/tree-table';
 import { type StatsInfo } from '@app/store/cdt-openapi';
-import { UxTableNew } from '@netcracker/ux-react';
 import { memo, type FC } from 'react';
 import { useCallsTreeData } from '../../calls-tree-context';
 import { columnsFactory, type TableData } from './columns';
@@ -25,11 +25,12 @@ const StatsTable: FC = () => {
 
     return (
         <div className="table-container">
-            <UxTableNew<TableData>
+            <TreeTable<TableData>
                 columns={columnsFactory()}
                 data={createTableData()}
                 loading={isFetching}
                 className="ux-table-with-native-expand"
+                rowKey="name"
             />
         </div>
     );

@@ -1,5 +1,5 @@
 import type { CallInfo } from '@app/store/cdt-openapi';
-import { createStoreContext } from '@netcracker/cse-ui-components';
+import { createStoreContext } from '@app/utils/create-store-context';
 import { type FC, type Key } from 'react';
 
 type CallsStoreModel = {
