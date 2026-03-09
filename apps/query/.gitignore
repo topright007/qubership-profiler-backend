@@ -94,3 +94,5 @@ node_modules
 junit.xml
 
 package/
+
+package-lock.json
